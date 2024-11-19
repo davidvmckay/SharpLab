@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <AssemblyName>SharpLab.Tests</AssemblyName>
     <RootNamespace>SharpLab.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\#external\mirrorsharp\Testing\Testing.csproj" />
+    <ProjectReference Include="..\#external\mirrorsharp-codemirror-6-preview\Testing\Testing.csproj" />
     <ProjectReference Include="..\Container.Manager\Container.Manager.csproj" />
     <ProjectReference Include="..\Container\Container.csproj" />
     <ProjectReference Include="..\Server\Server.csproj" />

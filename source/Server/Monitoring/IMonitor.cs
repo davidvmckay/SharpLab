@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using MirrorSharp.Advanced;
 
-namespace SharpLab.Server.Monitoring {
-    public interface IMonitor {
-        void Metric(MonitorMetric metric, double value);
-        void Exception(Exception exception, IWorkSession? session, IDictionary<string, string>? extras = null);
-    }
+namespace SharpLab.Server.Monitoring;
+public interface IMonitor {
+    IZeroDimensionMetricMonitor MetricSlow(string @namespace, string name);
+    IOneDimensionMetricMonitor MetricSlow(string @namespace, string name, string dimension);
+    void Exception(Exception exception, IWorkSession? session, IDictionary<string, string>? extras = null);
 }

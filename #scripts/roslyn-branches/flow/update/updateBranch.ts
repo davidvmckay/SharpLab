@@ -101,6 +101,7 @@ async function updateRoslynBuildPackages(currentBuildId: string|null) {
         a => a.name === 'Packages - PreRelease'
           || a.name === 'Bootstrap Packages - PreRelease'
           || a.name === 'Bootstrap Packages - AnyCpu'
+          || a.name === 'Bootstrap Packages - Default'
     );
     if (!roslynPackages) {
         throw `Packages were not found in Roslyn Azure build artifacts.\nAvailable artifacts: ${
@@ -114,7 +115,7 @@ async function updateRoslynBuildPackages(currentBuildId: string|null) {
     if (!(await fs.pathExists(zipPath))) { // Optimization for local only
         console.log(`GET ${downloadUrl} => ${zipPath}`);
         const response = await safeFetch(downloadUrl);
-        await pipeline(response.body, fs.createWriteStream(zipPath));
+        await pipeline(response.body!, fs.createWriteStream(zipPath));
     }
     else {
         console.log(`Found cached ${zipPath}, no need to download`);
@@ -176,7 +177,7 @@ async function buildSharpLab(roslynPackagesRoot: string) {
         // sigh: dotnet.exe should do this, but of course it does not
         const projectPath = projectPathUntyped as string;
         const projectName = path.basename(projectPath);
-        if (/mirrorsharp[/\\]Internal\.Roslyn/i.test(projectPath)) {
+        if (/mirrorsharp[^/\\]*[/\\]Internal\.Roslyn|Mobius\.ILasm\.Tests\.SourceGenerator/i.test(projectPath)) {
             console.log(`  ${projectName}`);
             console.log('    Skipping');
             continue;
@@ -221,6 +222,7 @@ async function buildSharpLab(roslynPackagesRoot: string) {
         '--source', 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json',
         '--source', 'https://ci.appveyor.com/nuget/vanara-prerelease',
         '--source', roslynPackagesRoot,
+        '-p:NuGetAudit=false',
         '--verbosity', 'minimal'
     ], {
         stdout: 'inherit',
@@ -241,7 +243,7 @@ async function buildSharpLab(roslynPackagesRoot: string) {
     });
 
     return {
-        publishRoot: `${branchSourceRoot}/Server/bin/Release/net7.0/publish`
+        publishRoot: `${branchSourceRoot}/Server/bin/Release/net9.0/publish`
     };
 }
 
